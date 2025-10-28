@@ -19,6 +19,7 @@ then
   echo "$USAGE"
   exit 1
 fi
+
 TARGET="$1"
 
 # verify if exists
@@ -26,7 +27,14 @@ NMAP=/usr/bin/nmap
 
 if [ -x "$NMAP" ];
 then
-    echo "$NMAP exists"
+    echo "Nmap exists at $NMAP"
+
+    # -sS : half scan, doesnt complete 3-w-h-s
+    # -Pn : assumes hosts is on
+    # -n : never do DNS resolution
+    
+    nmap -sS -Pn -n $TARGET
+
 else
     echo "Nmap NOT found in /usr/bin/nmap. Installing"
     sudo apt update && sudo apt install -y nmap
@@ -34,9 +42,9 @@ else
     #verify again
     if [ -x "$NMAP" ];
     then 
-        echo "$NMAP available"
+        echo "Nmap available $NMAP"
     else
-        echo "Error: nmap isnt available yet"
+        echo "Error: nmap still isnt available"
         exit 1
     fi
 fi
