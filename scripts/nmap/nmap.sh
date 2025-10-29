@@ -11,7 +11,9 @@ set -euo pipefail
 USAGE="Usage: ./nmap.sh <target> <Scan Mode>
 
 A: Agressive Scan
+D: Default scan
 S: Stealth scan
+V: vulnerability scan
 
 Example: ./nmap.sh example.com A
 
@@ -50,11 +52,59 @@ else
     fi
 fi
 
-if [ "$2" == "A" ];
-then
+# functions
+agressive_scan() {
     echo "Startin Agressive scan on $TARGET"
+    # sV - scan version
+    # sC - default scripts
+    # T4 - faster
     nmap -sV -sC -T4 $TARGET > $OUTDIR/nmap_agressive_$TARGET.txt
-else 
+
+    echo "The scan has been saved in $OUTDIR/nmap_agressive_$TARGET.txt"
+}
+
+default_scan() {
+    echo "Startin Discovery scan on $TARGET"
+
+    nmap $TARGET > $OUTDIR/nmap_discovery_$TARGET.txt
+
+    echo "The scan has been saved in $OUTDIR/nmap_discovery_$TARGET.txt"
+}
+
+stealth_scan() {
     echo "Startin Stealth scan on $TARGET"
+    # sS - stealth scan
+    # sV - scan version
+    # T1 - slower
+    # scan-delay XXXms - delay between probes
     nmap -sS -sV -T1 --scan-delay 250ms $TARGET > $OUTDIR/nmap_stealth_$TARGET.txt
-fi
+
+    echo "The scan has been saved in $OUTDIR/nmap_stealth_$TARGET.txt"
+}
+
+vulnerability_scan() {
+    echo "Startin Vulnerability scan on $TARGET"
+    # script vuln - vulnerability scripts
+    nmap --script vuln $TARGET > $OUTDIR/nmap_vuln_$TARGET.txt
+
+    echo "The scan has been saved in $OUTDIR/nmap_vuln_$TARGET.txt"
+}
+
+case "$2" in
+    "A"|"a")
+    agressive_scan "$TARGET"
+    ;;
+    "S"|"s")
+    stealth_scan "$TARGET"
+    ;;
+    "D"|"d")
+    default_scan "$TARGET"
+    ;;
+    "V"|"v")
+    vulnerability_scan "$TARGET"
+    ;;
+    *)
+    echo "Error, scan mode not recognize"
+    echo "$CHO"
+    exit 1
+esac
