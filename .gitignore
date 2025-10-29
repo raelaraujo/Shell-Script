@@ -1,2 +1,4 @@
 enum_output_*
+nmap_output_*
+dns_output_*
 *.txt
