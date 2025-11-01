@@ -31,6 +31,15 @@ mkdir -p "$OUTDIR" #-p parents
 AMASS=/snap/bin/amass
 SUBFINDER=/usr/local/bin/subfinder
 
+enums_scan() {
+    subfinder -d $DOMAIN -silent > $OUTDIR/subfinder_$DOMAIN.txt
+    amass enum --passive -d $DOMAIN > $OUTDIR/amass_$DOMAIN.txt
+
+    echo "Subdomain enum has been saved in:"
+    echo "$OUTDIR/subfinder_$DOMAIN.txt"
+    echo "$OUTDIR/amass_$DOMAIN.txt"
+}
+
 # verify AMASS ENUM
 if [ -x "$AMASS" ]; 
 then
@@ -39,20 +48,27 @@ else
     echo "Amass not found in /usr/bin/amass. Installing"
     # some distros doesnt uses snap
     echo "= = INSTALLING THROUGHT SNAP= ="
-    sudo apt update && sudo snap install amass enum -y
+    sudo apt update && sudo snap install amass -y
+
+    # verify again
+    if [ -x $AMASS ];
+    then
+        echo "Amass available $AMASS"
+    else
+        echo "Error: Amass still isnt available"
+    fi
 fi
 
 # verify SUBFINDER
-if [ -x "$SUBFINDER" ]; then
+if [ -x "$SUBFINDER" ];
+then
     echo "Subfinder exists at $SUBFINDER"
-
-    subfinder -d $DOMAIN > "$OUTDIR/subfinder_$DOMAIN.txt"
 
 else
     echo "Subfinder not found in /usr/local/bin/subfinder"
     sudo apt update && sudo apt install subfinder
 
-    # verify again
+    # verify agai
     if [ -x  "$SUBFINDER"];
     then
         echo "Subfinder avilable $SUBFINDER"
@@ -60,3 +76,5 @@ else
         echo "Error: Subfinder still isnt available"
     fi
 fi
+
+enums_scan "$DOMAIN"
