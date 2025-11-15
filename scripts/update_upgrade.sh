@@ -1,10 +1,16 @@
 #!/bin/bash
 
 echo "- - - UPDATE - - -"
+echo ""
 sudo apt update -y
+echo ""
 
 echo "- - - UPGRADE - - -"
+echo ""
 sudo apt upgrade -y
+echo ""
 
-echo "- - - AUTOREMOVE && AUTOCLEAN - - -"
+echo "- - - AUTOREMOVE && AUTORCLEAN - - -"
+echo ""
 sudo apt autoremove && sudo apt autoclean
+echo ""
